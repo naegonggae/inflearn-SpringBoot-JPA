@@ -29,6 +29,10 @@ dependencies {
     // view template 변경사항 바로 적용하기 위한 의존 / html 수정하고 망치모양 누르면 재시작 없이 반영됨
     implementation 'org.springframework.boot:spring-boot-devtools'
 
+    // 파라미터 쿼리 보여주는 라이브러리 / p6spy
+    // 운영단계에서도 살려둘지는 성능 테스트를 통해서 병목이 있는지 봐야한다.
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     annotationProcessor 'org.projectlombok:lombok'
