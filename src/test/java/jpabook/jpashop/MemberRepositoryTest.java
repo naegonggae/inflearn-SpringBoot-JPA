@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.repositiry.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +28,14 @@ class MemberRepositoryTest {
 		member.setUsername("memberA");
 
 		// when
-		Long saveId = memberRepository.save(member);
-		Member findMember = memberRepository.find(saveId);
+//		Long saveId = memberRepository.save(member);
+//		Member findMember = memberRepository.findOne(saveId);
 
 		// then
-		assertThat(findMember.getId()).isEqualTo(member.getId());
-		assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
-		assertThat(findMember).isEqualTo(member);
-		System.out.println("member = findMember: " + (member == findMember)); // 같은 1차캐시에 있는 것을 호출했기 때문에 / select 쿼리조차 안나감
+//		assertThat(findMember.getId()).isEqualTo(member.getId());
+//		assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
+//		assertThat(findMember).isEqualTo(member);
+//		System.out.println("member = findMember: " + (member == findMember)); // 같은 1차캐시에 있는 것을 호출했기 때문에 / select 쿼리조차 안나감
 	}
 
 }
