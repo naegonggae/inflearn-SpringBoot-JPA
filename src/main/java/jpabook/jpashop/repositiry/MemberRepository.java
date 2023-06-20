@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import java.util.List;
 import jpabook.jpashop.domain.Member;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
