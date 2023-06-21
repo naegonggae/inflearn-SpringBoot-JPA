@@ -45,7 +45,7 @@ public class Order {
 	private LocalDateTime orderDate; // 주문시간
 
 	@Enumerated(EnumType.STRING)
-	private OrderState orderState; // 주문상태 : ORDER, CANCEL
+	private OrderStatus orderStatus; // 주문상태 : ORDER, CANCEL
 
 	// 연관관계 편의 메서드 / 위치는 컨트롤하는 곳에 두면 좋음 / 양방향일 경우 쌍방향으로 저장해주는 역할
 	public void setMember(Member member) {
@@ -75,7 +75,7 @@ public class Order {
 		for (OrderItem orderItem : orderItems) {
 			order.addOrderItem(orderItem);
 		}
-		order.setOrderState(OrderState.ORDER);
+		order.setOrderStatus(OrderStatus.ORDER);
 		order.setOrderDate(LocalDateTime.now());
 		return order;
 	}
@@ -89,7 +89,7 @@ public class Order {
 		if (delivery.getStatus() == DeliveryStatus.COMP) {
 			throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다.");
 		}
-		this.setOrderState(OrderState.CANCEL);
+		this.setOrderStatus(OrderStatus.CANCEL);
 		for (OrderItem orderItem : orderItems) {
 			orderItem.cancel();
 		}

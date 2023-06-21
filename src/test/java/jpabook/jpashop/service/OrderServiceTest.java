@@ -6,7 +6,7 @@ import jakarta.persistence.EntityManager;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Order;
-import jpabook.jpashop.domain.OrderState;
+import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.domain.item.Book;
 import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.exception.NotEnoughStockException;
@@ -43,7 +43,7 @@ class OrderServiceTest {
 		//then
 		Order getOrder = orderRepository.findOne(orderId);
 
-		assertEquals(OrderState.ORDER, getOrder.getOrderState());
+		assertEquals(OrderStatus.ORDER, getOrder.getOrderStatus());
 		assertEquals(1, getOrder.getOrderItems().size());
 		assertEquals(10000 * orderCount, getOrder.getTotalPrice());
 		assertEquals(8, book.getStockQuantity());
@@ -81,7 +81,7 @@ class OrderServiceTest {
 
 		//then
 		Order getOrder = orderRepository.findOne(orderId);
-		assertEquals(OrderState.CANCEL, getOrder.getOrderState());
+		assertEquals(OrderStatus.CANCEL, getOrder.getOrderStatus());
 		assertEquals(10, item.getStockQuantity());
 	}
 
