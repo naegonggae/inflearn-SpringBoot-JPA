@@ -33,6 +33,9 @@ dependencies {
     // 운영단계에서도 살려둘지는 성능 테스트를 통해서 병목이 있는지 봐야한다.
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 
+    // @NotEmpty, @Valid 사용
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     annotationProcessor 'org.projectlombok:lombok'
