@@ -44,7 +44,7 @@ public class OrderRepository {
 			} else {
 				Jpql += " and";
 			}
-			Jpql += " o.status = :status";
+			Jpql += " o.orderStatus = :status";
 		}
 		//회원 이름 검색
 		if (StringUtils.hasText(orderSearch.getMemberName())) {
@@ -54,7 +54,7 @@ public class OrderRepository {
 			} else {
 				Jpql += " and";
 			}
-			Jpql += " m.name like :name";
+			Jpql += " m.username like :name";
 		}
 		TypedQuery<Order> query = em.createQuery(Jpql, Order.class) .setMaxResults(1000); //최대 1000건
 		if (orderSearch.getOrderStatus() != null) {
