@@ -24,7 +24,7 @@ public class OrderService {
 
 	// 주문
 	@Transactional
-	public Long order(Long memberId, Long itemId, int count) {
+	public Long order(Long memberId, Long itemId, int count) { // 이렇게 식별자로 넘기는게 좋다. 그냥 member 이렇게 넘기면 영속성상태가 아닌게 들어가기 때문에
 		// 엔티티 조회
 		Member member = memberRepository.findOne(memberId);
 		Item item = itemRepository.findOne(itemId);
