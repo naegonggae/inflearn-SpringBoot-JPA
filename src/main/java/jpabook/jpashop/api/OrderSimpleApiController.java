@@ -1,10 +1,15 @@
 package jpabook.jpashop.api;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repositiry.OrderRepository;
 import jpabook.jpashop.repositiry.OrderSearch;
 import jpabook.jpashop.service.OrderService;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,6 +52,43 @@ public class OrderSimpleApiController {
 		// -> 강제 지연로딩 설정까지 해주면 나오긴함
 
 		// 결론 엔티티쓰니까 내가 궁금한 필드 외에 다른 필드들도 조회를 하게 되어 성능이 나빠지고, 모든 필드들이 노출됨
+	}
+
+	@GetMapping("/api/v2/simple-orders")
+	public List<SimpleOrderDto> ordersV2() {
+		// *총 쿼리는 얼마나 나갈까 N+1
+		System.out.println("0======");
+		List<Order> orders = orderRepository.findAllByString(new OrderSearch()); // *select 쿼리나감 order 가 두개인걸 인지
+		System.out.println("1======");
+		List<SimpleOrderDto> collect = orders.stream()
+				.map(o -> new SimpleOrderDto(o)) // map 은 A -> B 로 바꾸는것 .map(SimpleOrderDto::new) 람다표현도 가능
+				.collect(Collectors.toList());
+		System.out.println("2======");
+		return collect;
+	}
+
+	@Data
+	static class SimpleOrderDto {
+		private Long orderId;
+		private String name;
+		private LocalDateTime orderDate;
+		private OrderStatus orderStatus;
+		private Address address;
+
+		public SimpleOrderDto(Order order) {
+			System.out.println("3======");
+			orderId = order.getId();
+			System.out.println("4======");
+			name = order.getMember().getUsername(); // LAZY 초기화 //* member select X 2
+			System.out.println("5======");
+			orderDate = order.getOrderDate();
+			orderStatus = order.getOrderStatus();
+			System.out.println("6======");
+			address = order.getDelivery().getAddress(); // LAZY 초기화
+			// * delivery select X 2 여야하는데 왜 자꾸 delivery 랑 order 은 같이 나가냐 이거땜에 총 7번나가
+			// 하이버네이트 문제같다고 말하심
+			System.out.println("7======");
+		}
 	}
 
 
