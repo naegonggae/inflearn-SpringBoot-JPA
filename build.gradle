@@ -26,6 +26,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // 프록시 객체를 무시하기 위해 사용
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5-jakarta'
+
     // view template 변경사항 바로 적용하기 위한 의존 / html 수정하고 망치모양 누르면 재시작 없이 반영됨
     implementation 'org.springframework.boot:spring-boot-devtools'
 
