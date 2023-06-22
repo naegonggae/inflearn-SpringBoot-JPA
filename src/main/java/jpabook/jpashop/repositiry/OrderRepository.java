@@ -93,7 +93,7 @@ public class OrderRepository {
 	// 페치 조인 전략
 	// 사실 fetch 라는 명령어는 SQL 에 없다. JPA 기술임
 	// 실무에서 성능문제는 90% 가 N+1 문제다 나머지가 10%...
-	public List<Order> findAllWithMemberDelivery() {
+	public List<Order> findAllWithMemberDelivery() { // 많은 API 들이 사용할 수 있음, 재사용성 높다.
 		List<Order> resultList = em.createQuery( // 다 땡겨오는 한방 쿼리
 				// 프록시말고 진짜 객체 가져오고, 지연로딩 무시하고 바로가져옴
 								"select o from Order o" +
