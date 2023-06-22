@@ -24,6 +24,13 @@ public class OrderSimpleApiController {
 	@GetMapping("/api/v1/simple-orders")
 	public List<Order> ordersV1() {
 		List<Order> all = orderRepository.findAllByString(new OrderSearch());
+		for (Order order : all) {
+			order.getMember().getUsername(); // Lazy 강제 초기화
+			order.getDelivery().getAddress();
+			// order.getMember() <- 여기까지는 프록시 였는데 .getUsername() <- 이후 요 작업을 하면서 DB 에서 직접꺼내와야함으로 진짜 객체로 바뀐다.
+			// 즉, Hibernate5JakartaModule 강제 지연로딩 해제 쓰지않고도 해결가능하긴하다.
+			// 그렇다고 패치전략을 EAGER 로 바꾸는건 좋지 않다 다른 곳에서도 사용하기 때문
+		}
 		return all;
 		// 문제점 1. 무한 루프를 돈다. order -> member -> order -> member ... / 그래서 양방향 매핑 한쪽에 JsonIgnore 해줌
 		// 문제점 2. 이제 매핑된 정보에 접근하려하는데 fetch 전략이 LAZY 이므로 bytebuddy 즉, 프록시 객체를 만나서 에러가 난다.

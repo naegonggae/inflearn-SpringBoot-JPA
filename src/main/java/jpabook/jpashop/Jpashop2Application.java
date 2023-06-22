@@ -16,8 +16,8 @@ public class Jpashop2Application {
 	Hibernate5JakartaModule hibernate5Module() {
 		Hibernate5JakartaModule hibernate5JakartaModule = new Hibernate5JakartaModule();
 		//강제 지연 로딩 설정
-		hibernate5JakartaModule.configure(Hibernate5JakartaModule.Feature.FORCE_LAZY_LOADING,
-				true);
+//		hibernate5JakartaModule.configure(Hibernate5JakartaModule.Feature.FORCE_LAZY_LOADING,
+//				true); 이거 끄고도 지연로딩 문제 해결 가능
 		return hibernate5JakartaModule;
 	}
 }
