@@ -1,5 +1,6 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -21,11 +22,12 @@ public class Member {
 	private Long id;
 
 	@NotEmpty // Valid 로 컨트롤 가능 / 없으면 Bad Request 400
-	private String username;
+	private String username; // 엔티티를 직접 호출해서 사용하면 이 필드가 바꼈을때 이걸 사용하는 모든 api 에 문제가 생긴다.
 
 	@Embedded
 	private Address address;
 
+	// @JsonIgnore // 응답할때 아래필드가 빠짐 / 다른곳은 이 필드를 원할수도 있음 / 그리고 엔티티에 화면을 위한 설정이 있음
 	@OneToMany(mappedBy = "member")
 	private List<Order> orders = new ArrayList<>();
 
