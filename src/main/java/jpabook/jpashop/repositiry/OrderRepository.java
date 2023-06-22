@@ -104,6 +104,30 @@ public class OrderRepository {
 		return resultList;
 	}
 
+	public List<Order> findAllWithItem() {
+
+		List<Order> resultList = em.createQuery(
+						"select distinct o from Order o" + // 스프링부트 3부터는 distinct 자동으로 해줌
+								// DB 쿼리에서는 distinct 으로 안줄어들어 똑같이 쿼리 조회해보면 주문 4개 나감
+								// 여기서 중복제거 해준거는 order id 같길래 걸러서 컬렉션에 담아줌
+								" join fetch o.member m" +
+								" join fetch o.delivery d" +
+								" join fetch o.orderItems oi" +
+								" join fetch oi.item i", Order.class)
+				.setFirstResult(1)
+				.setMaxResults(100)
+				// 단점 페이징 불가
+				// firstResult/maxResults specified with collection fetch; applying in memory
+				// 페이징조건이 페치랑 같이 설정됐다. 그래서 메모리에서 페이징하겠다라는 소리
+				// 근데 데이터수가 많은데 메모리에서 페이징하다보면 메모리초과해서 에러가 발생할 수 있다.
+				// 이렇게 하는 이유는 DB 에서는 뻥튀기 된 데이터를 받기 때문에 개발자의 의도대로 페이징 처러할 수 없어서 메로리에서 실행시키려한다.
+				.getResultList();
+		return resultList;
+		// DB 는 조인하면 아이템갯수가 총 4개라 4개의 주문이라 인식한다.
+		// 사람이 볼때는 2개의 주문에 각각 2개씩 시킨거라 생각하지만
+		// 한방쿼리지만 쿼리 결과가 4개로 나옴
+	}
+
 	// 결론 : 복잡한 JPQL 과 동적 쿼리를 해결하기 위해서 쿼리 DSL 을 사용하자
 
 }

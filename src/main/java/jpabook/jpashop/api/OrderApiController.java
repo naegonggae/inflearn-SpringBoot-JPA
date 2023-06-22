@@ -51,6 +51,21 @@ public class OrderApiController {
 		// -> order, member, delivery, orderItem, item, item, member, delivery, orderItem, item, item
 	}
 
+	@GetMapping("/api/v3/orders")
+	public List<OrderDto> ordersV3() {
+		List<Order> orders = orderRepository.findAllWithItem();
+		for (Order order : orders) {
+			System.out.println("order ref= " + order + " id =" + order.getId());
+		}
+		List<OrderDto> collect = orders.stream()
+				.map(o -> new OrderDto(o))
+				.collect(Collectors.toList());
+		return collect;
+		// JPA 구현체로 Hibernate를 사용하는데, 스프링 부트 3버전 부터는 Hibernate 6 버전을 사용하고 있습니다 :)
+		//
+		//Hibernate 6버전은 페치 조인 사용 시 자동으로 중복 제거를 하도록 변경되었다고 합니다.
+	}
+
 	@Getter
 	static class OrderDto {
 		private Long orderId;
