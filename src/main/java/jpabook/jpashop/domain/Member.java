@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class Member {
 	@Column(name = "member_id")
 	private Long id;
 
+	@NotEmpty // Valid 로 컨트롤 가능 / 없으면 Bad Request 400
 	private String username;
 
 	@Embedded

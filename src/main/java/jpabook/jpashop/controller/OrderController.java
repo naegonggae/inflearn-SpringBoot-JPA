@@ -8,7 +8,6 @@ import jpabook.jpashop.repositiry.OrderSearch;
 import jpabook.jpashop.service.ItemService;
 import jpabook.jpashop.service.MemberService;
 import jpabook.jpashop.service.OrderService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,7 +37,7 @@ public class OrderController {
 	}
 
 	@PostMapping("/order")
-	public String order(@RequestParam("memberId") Long memberId,
+	public String order(@RequestParam("memberId") Long memberId, //orderForm 에 name 값을 지정할 수 있구나
 						@RequestParam("itemId") Long itemId,
 						@RequestParam("count") int count) {
 		orderService.order(memberId, itemId, count); // 여러개의 상품을 주문할 수 있도록 하려면 어떻게 로직을 짜야할까?
