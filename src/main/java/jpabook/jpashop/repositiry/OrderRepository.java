@@ -90,6 +90,20 @@ public class OrderRepository {
 		return query.getResultList();
 	}
 
+	// 페치 조인 전략
+	// 사실 fetch 라는 명령어는 SQL 에 없다. JPA 기술임
+	// 실무에서 성능문제는 90% 가 N+1 문제다 나머지가 10%...
+	public List<Order> findAllWithMemberDelivery() {
+		List<Order> resultList = em.createQuery( // 다 땡겨오는 한방 쿼리
+				// 프록시말고 진짜 객체 가져오고, 지연로딩 무시하고 바로가져옴
+								"select o from Order o" +
+								" join fetch o.member m" +
+								" join fetch o.delivery d", Order.class)
+				.getResultList();
+
+		return resultList;
+	}
+
 	// 결론 : 복잡한 JPQL 과 동적 쿼리를 해결하기 위해서 쿼리 DSL 을 사용하자
 
 }

@@ -57,6 +57,7 @@ public class OrderSimpleApiController {
 	@GetMapping("/api/v2/simple-orders")
 	public List<SimpleOrderDto> ordersV2() {
 		// *총 쿼리는 얼마나 나갈까 N+1
+		// Order 1번(order 가 2개면) + 회원 * 2 + 주소 * 2 = 5번
 		System.out.println("0======");
 		List<Order> orders = orderRepository.findAllByString(new OrderSearch()); // *select 쿼리나감 order 가 두개인걸 인지
 		System.out.println("1======");
@@ -64,6 +65,19 @@ public class OrderSimpleApiController {
 				.map(o -> new SimpleOrderDto(o)) // map 은 A -> B 로 바꾸는것 .map(SimpleOrderDto::new) 람다표현도 가능
 				.collect(Collectors.toList());
 		System.out.println("2======");
+		return collect;
+	}
+
+	@GetMapping("/api/v3/simple-orders")
+	public List<SimpleOrderDto> ordersV3() {
+		System.out.println("8======");
+		List<Order> orders = orderRepository.findAllWithMemberDelivery();
+		System.out.println("11======");
+		List<SimpleOrderDto> collect = orders.stream()
+				.map(o -> new SimpleOrderDto(o))
+				.collect(Collectors.toList());
+		System.out.println("10======");
+		// 8, 쿼리, 11,3,4,5,6,7,3,4,5,6,7,10 끝
 		return collect;
 	}
 
