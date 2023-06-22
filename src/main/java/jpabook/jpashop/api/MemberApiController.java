@@ -28,19 +28,20 @@ public class MemberApiController {
 	}
 
 	@GetMapping("/api/v2/members")
-	public Result memverV2() {
+	public Result memberV2() {
 		List<Member> findMembers = memberService.findMembers();
 		List<MemberDto> collect = findMembers.stream()
 				.map(m -> new MemberDto(m.getUsername()))
 				.collect(Collectors.toList());
+		// findMembers 리스트에서 MemberDto 필드만 가진 것들을 모아서 리스트로 만들고 data 에 담는다.
 		return new Result(collect.size(), collect);
 	}
 
 	@Data
 	@AllArgsConstructor
-	static class Result<T> { // Json 에 리스트 사용하고 싶을때
+	static class Result<T> {
 		private int count;
-		private T data;
+		private T data; // 이 필드에 리스트를 넣어준다.
 	}
 
 	@Data
