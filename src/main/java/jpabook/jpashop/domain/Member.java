@@ -28,7 +28,7 @@ public class Member {
 	private Address address;
 
 	// @JsonIgnore // 응답할때 아래필드가 빠짐 / 다른곳은 이 필드를 원할수도 있음 / 그리고 엔티티에 화면을 위한 설정이 있음
-	//@JsonIgnore // 양방향 매핑이면 어디 한쪽은 해줘야 무한루프에 안걸림
+	@JsonIgnore // 양방향 매핑이면 어디 한쪽은 해줘야 무한루프에 안걸림
 	@OneToMany(mappedBy = "member")
 	private List<Order> orders = new ArrayList<>();
 

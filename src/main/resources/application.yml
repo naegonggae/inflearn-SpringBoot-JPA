@@ -17,3 +17,5 @@ logging:
   level:
     org.hibernate.SQL: debug
 #    org.hibernate.jdbc.bind: trace
+
+#spring.jpa.open-in-view : false
