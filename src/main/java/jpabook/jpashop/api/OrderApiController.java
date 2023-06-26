@@ -10,6 +10,8 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repositiry.OrderRepository;
 import jpabook.jpashop.repositiry.OrderSearch;
+import jpabook.jpashop.repositiry.order.query.OrderQueryDto;
+import jpabook.jpashop.repositiry.order.query.OrderQueryRepository;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderApiController {
 
 	private final OrderRepository orderRepository;
+	private final OrderQueryRepository orderQueryRepository;
 
 	// 엔티티를 직접 노출해서 사용하면 안되는 방법이다.
 	@GetMapping("/api/v1/orders")
@@ -87,6 +90,12 @@ public class OrderApiController {
 				.collect(Collectors.toList());
 		return collect;
 	}
+
+	@GetMapping("/api/v4/orders")
+	public List<OrderQueryDto> ordersV4() {
+		return orderQueryRepository.findOrderQueryDtos();
+	}
+
 
 	@Data
 	static class OrderDto {
