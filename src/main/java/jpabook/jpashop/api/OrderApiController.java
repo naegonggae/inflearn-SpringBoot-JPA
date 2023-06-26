@@ -10,9 +10,11 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repositiry.OrderRepository;
 import jpabook.jpashop.repositiry.OrderSearch;
+import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -66,8 +68,29 @@ public class OrderApiController {
 		//Hibernate 6버전은 페치 조인 사용 시 자동으로 중복 제거를 하도록 변경되었다고 합니다.
 	}
 
-	@Getter
+	// localhost:8080/api/v3.1/orders?offset=1&limit=100 페이징 아주 잘됨
+	// default_batch_fetch_size: 100 이 조건을 해주면 기존에 OrderItem 불러올때 Order 당 아이템 몇개인지 + Item1 + Item2 * 2 했는데
+	// Order 불러올때 Order 기준으로 in 쿼리를 날려 주문당 OrderItem 을 한꺼번에 가져온다.
+	// 그래서 쿼리는 m, d 페치조인으로 한번에 땡겨오고, orderItems in 조건쿼리로 땡겨오고, item 다 가져오고
+	// 1+N+N -> 1+1+1 됐다. 페이징도되고 성능최적화도 됐다. 물론 배치 사이즈가 초과되지 않았을때 / 더 빨리 하려면 레디스써야함
+	@GetMapping("/api/v3.1/orders")
+	public List<OrderDto> ordersV3_page(
+			@RequestParam(value = "offset", defaultValue = "0") int offset,
+			@RequestParam(value = "limit", defaultValue = "100") int limit
+	) {
+		List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit); // ToOne 관계는 Fetch join 으로 해결 페이징에 영향을 주지 않기 때문
+//		for (Order order : orders) {
+//			System.out.println("order ref= " + order + " id =" + order.getId());
+//		}
+		List<OrderDto> collect = orders.stream()
+				.map(o -> new OrderDto(o))
+				.collect(Collectors.toList());
+		return collect;
+	}
+
+	@Data
 	static class OrderDto {
+
 		private Long orderId;
 		private String name;
 		private LocalDateTime orderDate;
@@ -87,7 +110,7 @@ public class OrderApiController {
 		}
 	}
 
-	@Getter
+	@Data
 	static class OrderItemDto {
 
 		private String itemName;
@@ -102,3 +125,7 @@ public class OrderApiController {
 	}
 
 }
+
+// 1대 다 조인을 하면 데이터가 뻥튀기 된다는게 DB 에서 조회할때 Order 보다 OrderItem 이 더 많기 때문에 그 차이만큼 Order 정보는 중복해서 쓰이고
+// DB 는 그걸 다 땡겨와야하기 때문에 성능이슈가 있다. 용량도 많아지고
+// 배치 사이즈를 지정해서 땡겨오면 정규화가 되서 조회가 되기 때문에 효율적이다. 딱 필요한 정보만 애플리케이션에 전송한다.

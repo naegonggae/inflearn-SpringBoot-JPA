@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "orders")
@@ -35,6 +36,7 @@ public class Order {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
+//	@BatchSize(size = 1000) // 배치 사이즈를 세부 조정할 수 있다. / 컬랙션은 필드에 적고 아닌것들은 상단에 적음 / 근데 굳이 안쓴다고함
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL) // 일대일 매핑의 주인을 어디로 선정할지 고려해야한다.
 	private List<OrderItem> orderItems = new ArrayList<>();
 

@@ -104,6 +104,20 @@ public class OrderRepository {
 		return resultList;
 	}
 
+	public List<Order> findAllWithMemberDelivery(int offset, int limit) { // 많은 API 들이 사용할 수 있음, 재사용성 높다.
+		List<Order> resultList = em.createQuery( // 다 땡겨오는 한방 쿼리
+						// 프록시말고 진짜 객체 가져오고, 지연로딩 무시하고 바로가져옴
+						"select o from Order o" +
+								" join fetch o.member m" +
+								" join fetch o.delivery d", Order.class) // 여기서 ToOne 관계애들도 없애도 된다.
+				// 대신 결과는 Where in 쿼리로 O1 + M1 + D1 + OI1 + I1 쿼리가 나가고 모두 정규화된 상태가 된다.
+				.setFirstResult(offset)
+				.setMaxResults(limit)
+				.getResultList();
+
+		return resultList;
+	}
+
 	public List<Order> findAllWithItem() {
 
 		List<Order> resultList = em.createQuery(
@@ -129,5 +143,8 @@ public class OrderRepository {
 	}
 
 	// 결론 : 복잡한 JPQL 과 동적 쿼리를 해결하기 위해서 쿼리 DSL 을 사용하자
+
+	// 우리는 Order 기준으로 select 도하고 페이징도하고 컬렉션을 페치조인도 하길 원하지만 DB 는 갯수가 더 많은 Item 기준으로 해준다..
+	// 이건 개발자가 의도한 방향이 아닌데 그러면 어떻게 해야할까? ->
 
 }
