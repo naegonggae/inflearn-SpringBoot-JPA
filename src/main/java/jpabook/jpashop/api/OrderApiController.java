@@ -1,5 +1,9 @@
 package jpabook.jpashop.api;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,6 +14,8 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repositiry.OrderRepository;
 import jpabook.jpashop.repositiry.OrderSearch;
+import jpabook.jpashop.repositiry.order.query.OrderFlatDto;
+import jpabook.jpashop.repositiry.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repositiry.order.query.OrderQueryDto;
 import jpabook.jpashop.repositiry.order.query.OrderQueryRepository;
 import lombok.Data;
@@ -48,7 +54,7 @@ public class OrderApiController {
 		List<Order> orders = orderRepository.findAllByString(new OrderSearch());
 		List<OrderDto> collect = orders.stream()
 				.map(o -> new OrderDto(o))
-				.collect(Collectors.toList());
+				.collect(toList());
 		return collect;
 		// DTO 로 반환하라는것은 엔티티를 DTO 에서 사용하는 랩핑도 안되는것임, 왜? 엔티티가 외부에 노출이 되니까
 		// 엔티티에 대한 의존을 완전히 끊어야함
@@ -64,7 +70,7 @@ public class OrderApiController {
 		}
 		List<OrderDto> collect = orders.stream()
 				.map(o -> new OrderDto(o))
-				.collect(Collectors.toList());
+				.collect(toList());
 		return collect;
 		// JPA 구현체로 Hibernate를 사용하는데, 스프링 부트 3버전 부터는 Hibernate 6 버전을 사용하고 있습니다 :)
 		//
@@ -87,7 +93,7 @@ public class OrderApiController {
 //		}
 		List<OrderDto> collect = orders.stream()
 				.map(o -> new OrderDto(o))
-				.collect(Collectors.toList());
+				.collect(toList());
 		return collect;
 	}
 
@@ -99,6 +105,28 @@ public class OrderApiController {
 	@GetMapping("/api/v5/orders")
 	public List<OrderQueryDto> ordersV5() {
 		return orderQueryRepository.findAllByDto_optimization();
+	}
+
+	@GetMapping("/api/v6/orders")
+	public List<OrderQueryDto> ordersV6() {
+//		return orderQueryRepository.findAllByDto_flat(); // OrderFlatDto 형태로 뽑아내기
+
+		// OrderQueryDto 형태로 바꾸기
+		List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
+
+		return flats.stream()
+				.collect(groupingBy(o -> new OrderQueryDto(o.getId(),
+								o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress()),
+						mapping(o -> new OrderItemQueryDto(o.getId(),
+								o.getItemName(), o.getOrderPrice(), o.getCount()), toList())
+				)).entrySet().stream()
+				.map(e -> new OrderQueryDto(e.getKey().getId(),
+						e.getKey().getName(), e.getKey().getOrderDate(), e.getKey().getOrderStatus(),
+						e.getKey().getAddress(), e.getValue()))
+				.collect(toList());
+		// 쿼리 한방임
+		// Order 기준으로 페이징 불가능
+		//
 	}
 
 
@@ -120,7 +148,7 @@ public class OrderApiController {
 			address = order.getDelivery().getAddress(); // LAZY 초기화
 			orderItems = order.getOrderItems().stream()
 					.map(o -> new OrderItemDto(o))
-					.collect(Collectors.toList());
+					.collect(toList());
 		}
 	}
 

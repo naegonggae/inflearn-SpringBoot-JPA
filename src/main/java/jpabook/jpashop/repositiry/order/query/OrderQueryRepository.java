@@ -83,6 +83,20 @@ public class OrderQueryRepository {
 				.getResultList();
 		return resultList;
 	}
+
+	public List<OrderFlatDto> findAllByDto_flat() {
+		return em.createQuery(
+				"select new" +
+						" jpabook.jpashop.repositiry.order.query.OrderFlatDto(o.id, m.username, o.orderDate, o.orderStatus, d.address, i.name, oi.price, oi.count)" +
+						" from Order o" +
+						" join o.member m" +
+						" join o.delivery d" +
+						" join o.orderItems oi" +
+						" join oi.item i", OrderFlatDto.class)
+				.getResultList();
+		// 한방쿼리 가능
+		// 페이징은 item 수 기준으로 할 수 있음
+	}
 }
 // repository 에 만들지 않고 이렇게 따로 패키지를 파서 만드는 이유는 레포지토리는 엔티티에 접근하는 용도인데 지금만든거는 특정 화면에서 사용되는 접근방식이므로
 // 공간을 분리한 것이다. / 관심사 분리 / 핵심로직 vs 화면쿼리
